@@ -8,9 +8,9 @@ private:
     double num1, num2;
 
 public:
-    Calculator(double a = 0, double b = 0){
-        this->num1=a;
-        this->num2=b;
+    Calculator(double a = 0, double b = 0) {
+        this->num1 = a;
+        this->num2 = b;
     }
 
     double add() {
@@ -34,17 +34,17 @@ public:
         }
     }
 
- 
-    void Nums(double &a, double &b) const {
+    void Nums(double& a, double& b) const {
         a = num1;
         b = num2;
     }
 };
 
 int main() {
-    const int MAX_CALCULATIONS = 10; 
-    Calculator calculations[MAX_CALCULATIONS];
-    int count = 0; 
+    const int MAX_CALCULATIONS = 10;
+    Calculator* calculations[MAX_CALCULATIONS];
+    int count = 0;
+
     while (count < MAX_CALCULATIONS) {
         string expression;
         cout << "Enter an expression (or type '/' to stop): ";
@@ -59,24 +59,23 @@ int main() {
         stringstream ss(expression);
         ss >> num1 >> operation >> num2;
 
-      
-        Calculator calc(num1, num2);
-        calculations[count] = calc; 
+        Calculator* calc = new Calculator(num1, num2);
+        calculations[count] = calc;
         count++;
 
         double result;
         switch (operation) {
             case '+':
-                result = calc.add();
+                result = calc->add();
                 break;
             case '-':
-                result = calc.sub();
+                result = calc->sub();
                 break;
             case '*':
-                result = calc.mul();
+                result = calc->mul();
                 break;
             case '/':
-                result = calc.div();
+                result = calc->div();
                 break;
             default:
                 cout << "Invalid operation!" << endl;
@@ -89,8 +88,10 @@ int main() {
     cout << "NUMBERS CALCULATED BEFORE:" << endl;
     for (int i = 0; i < count; i++) {
         double num1, num2;
-        calculations[i].Nums(num1, num2);
+        calculations[i]->Nums(num1, num2);
         cout << num1 << " and " << num2 << endl;
+
+        delete calculations[i];
     }
 
     return 0;
