@@ -6,11 +6,16 @@ using namespace std;
 class Calculator {
 private:
     double num1, num2;
-
+    static int totalCalculations; 
 public:
     Calculator(double a = 0, double b = 0) {
         this->num1 = a;
         this->num2 = b;
+        totalCalculations++; 
+    }
+
+    static int getTotalCalculations() { 
+        return totalCalculations;
     }
 
     double add() {
@@ -39,6 +44,8 @@ public:
         b = num2;
     }
 };
+
+int Calculator::totalCalculations = 0;
 
 int main() {
     const int MAX_CALCULATIONS = 10;
@@ -93,6 +100,8 @@ int main() {
 
         delete calculations[i];
     }
+
+    cout << "TOTAL CALCULATIONS PERFORMED: " << Calculator::getTotalCalculations() << endl;
 
     return 0;
 }
