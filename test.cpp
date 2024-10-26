@@ -3,62 +3,70 @@
 #include <iomanip>
 using namespace std;
 
-class Calculator
+class Operation
 {
-private:
-    double num1, num2;
-    static int totalCalculations;
-
 public:
-    Calculator(double a = 0, double b = 0)
-    {
-        this->num1 = a;
-        this->num2 = b;
-        totalCalculations++;
-    }
+    virtual double calculate(double a, double b) const = 0; 
+    virtual ~Operation() {}
+};
 
-    ~Calculator()
+class Add : public Operation
+{
+public:
+    double calculate(double a, double b) const override
     {
-        cout << "Calculator object is being destroyed. Total Calculations: " << totalCalculations << endl;
+        return a + b;
     }
+};
 
-    static int getTotalCalculations()
+class Subtract : public Operation
+{
+public:
+    double calculate(double a, double b) const override
     {
-        return totalCalculations;
+        return a - b;
     }
+};
 
-    double add()
+class Multiply : public Operation
+{
+public:
+    double calculate(double a, double b) const override
     {
-        return num1 + num2;
+        return a * b;
     }
+};
 
-    double sub()
+class Divide : public Operation
+{
+public:
+    double calculate(double a, double b) const override
     {
-        return num1 - num2;
-    }
-
-    double mul()
-    {
-        return num1 * num2;
-    }
-
-    double div()
-    {
-        if (num2 != 0)
-        {
-            return num1 / num2;
-        }
+        if (b != 0)
+            return a / b;
         else
         {
             cout << "Error: DIVISION BY ZERO!" << endl;
             return 0;
         }
     }
+};
 
-    void Nums(double &a, double &b) const
+class Calculator
+{
+private:
+    static int totalCalculations;
+
+public:
+    Calculator() { totalCalculations++; }
+
+    ~Calculator() { cout << "Calculator object is being destroyed. Total Calculations: " << totalCalculations << endl; }
+
+    static int getTotalCalculations() { return totalCalculations; }
+
+    double calculate(Operation* operation, double num1, double num2) const
     {
-        a = num1;
-        b = num2;
+        return operation->calculate(num1, num2);
     }
 };
 
@@ -86,44 +94,31 @@ int main()
         stringstream ss(expression);
         ss >> num1 >> operation >> num2;
 
-        Calculator *calc = new Calculator(num1, num2);
+        Operation* op = nullptr;
+        switch (operation)
+        {
+            case '+': op = new Add(); break;
+            case '-': op = new Subtract(); break;
+            case '*': op = new Multiply(); break;
+            case '/': op = new Divide(); break;
+            default: cout << "Invalid operation!" << endl; continue;
+        }
+
+        Calculator *calc = new Calculator();
         calculations[count] = calc;
         count++;
 
-        double result;
-        switch (operation)
+        if (op != nullptr)
         {
-        case '+':
-            result = calc->add();
-            break;
-        case '-':
-            result = calc->sub();
-            break;
-        case '*':
-            result = calc->mul();
-            break;
-        case '/':
-            result = calc->div();
-            break;
-        default:
-            cout << "Invalid operation!" << endl;
-            continue;
+            double result = calc->calculate(op, num1, num2);
+            cout << "THE RESULT IS " << fixed << setprecision(2) << result << endl;
+            delete op;
         }
-
-        cout << "THE RESULT IS " << fixed << setprecision(2) << result << endl;
-    }
-
-    cout << "NUMBERS CALCULATED BEFORE:" << endl;
-    for (int i = 0; i < count; i++)
-    {
-        double num1, num2;
-        calculations[i]->Nums(num1, num2);
-        cout << num1 << " and " << num2 << endl;
-
-        delete calculations[i];
     }
 
     cout << "TOTAL CALCULATIONS PERFORMED: " << Calculator::getTotalCalculations() << endl;
+
+
 
     return 0;
 }
