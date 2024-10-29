@@ -40,15 +40,11 @@ public:
 class Divide : public Operation
 {
 public:
-    double calculate(double a, double b) const override
-    {
-        if (b != 0)
-            return a / b;
-        else
-        {
-            cout << "Error: DIVISION BY ZERO!" << endl;
-            return 0;
+    double calculate(double a, double b) const override {
+        if (b == 0) {
+            throw runtime_error("Error: Division by zero!");
         }
+        return a / b;
     }
 };
 
